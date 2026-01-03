@@ -1,21 +1,34 @@
-export default function test(){
-    return (
-        	<div className="w-[600px] h-[600px] border-4 relative">
-			<div className="w-[500px] h-[500px] bg-amber-200 flex flex-col items-center justify-center relative">
-				<div className="w-[75px] h-[75px] bg-blue-600 m-[20px] p-[20px]">Box1
-				</div>
-				<div className="w-[75px] h-[75px] bg-red-600 mt-[20px] mb-[20px] pr-[20px]">Box2
-				</div>
-				<div className="w-[75px] h-[75px] bg-green-600 absolute top-[10px] right-[10px] z-[1] ml-[20px] pl-[20px]">Box 3
-				</div>
-				<div className="w-[75px] h-[75px] bg-purple-600 fixed top-[10px] right-[1150px] z-[2]">
-				</div>
-				<div className="w-[75px] h-[75px] bg-black">
-				</div>
-				<div className="w-[75px] h-[75px] bg-[#00FFFF]">
-				</div>
+import { useState } from "react";
 
+export default function Test(){
+	const [count, setCount] = useState(0)
+	const [isVisible, setIsVisible] = useState(true)
+
+
+	
+    return (
+        	<div className="w-full h-full bg-yellow-600 flex justify-center items-center">
+
+              <h1>{isVisible}</h1>
+               <button onClick={ 
+				() =>{
+					 setIsVisible(!isVisible)
+					}
+				} className="w-[50px] h-[50px] bg-red-600 text-white">{isVisible?"X":"O"}</button>
+
+		{isVisible && <div className="w-[400px] h-[400px] bg-white flex justify-center items-center flex-col">
+			<h1 className="text-[55px]">{count}</h1>
+			<div className="w-full h-[50px] flex justify-around items-center"> {/*we can also use gap-5*/}
+				<button onClick={
+					() => {
+						setCount(count - 1)}
+						} className="w-[100px] h-[45px] bg-red-600 text-white">decrement</button>
+				<button onClick={
+					() => {
+						setCount(count + 1)}
+						} className="w-[100px] h-[45px] bg-green-600 text-white">increment</button>
 			</div>
+		</div>}
 			
 		</div>
     )
