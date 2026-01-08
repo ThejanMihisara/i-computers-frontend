@@ -25,7 +25,6 @@ export default function LoginPage() {
 
 //    }
 
-
     async function Login(){
       try {
         const response = await axios.post(import.meta.env.VITE_API_URL + "/users/Login", {
@@ -33,12 +32,15 @@ export default function LoginPage() {
           password: password
         });
         console.log(response);
+         localStorage.setItem("token", response.data.token);
         if(response.data.role === "admin"){
           // navigate to admin dashboard
             // window.location.href = "/admin/";
+           
             navigate("/admin/");
 
 
+            
         }else{
           // navigate to user dashboard
         }
