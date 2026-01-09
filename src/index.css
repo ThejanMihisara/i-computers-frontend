@@ -4,3 +4,14 @@
     --color-secondary: #01303f;
     --color-accent: #02a9f7;
 }
+
+.hide-scroll-track::-webkit-scrollbar {
+    width:8px;
+}
+.hide-scroll-track::-webkit-scrollbar-track {
+    background: transparent;
+}
+.hide-scroll-track::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}

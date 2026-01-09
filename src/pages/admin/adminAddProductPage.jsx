@@ -1,111 +1,129 @@
 import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+/*
 
-export default function AdminAddProductPage() {
+    
+        isVisible : {
+            type : Boolean,
+            default : true,
+            required : true
+        },
+*/
+export default function AdminAddProductPage(){
+    
+    const [productId , setProductId] = useState("");
+    const [name , setName] = useState("");
+    const [description , setDescription] = useState("");
+    const [altNames , setAltNames] = useState("");
+    const [price , setPrice] = useState("");
+    const [labelledPrice , setLabelledPrice] = useState("");
+    const [category , setCategory] = useState("Others");
+    const [brand , setBrand] = useState("Standard");
+    const [model , setModel] = useState("");
+    const [isVisible , setIsVisible] = useState(true);
+    const navigate = useNavigate();
 
-    const [productID, setProductID] = useState("");
-    const [productName, setProductName] = useState("");
-    const [Description, setDescription] = useState("");
-    const [AltName, setAltName] = useState("");
-    const [Price, setPrice] = useState("");
-    const [Label, setLabel] = useState("");
-    const [Category, setCategory] = useState("Others");
-    const [Brand, setBrand] = useState("Standard");
-    const [Model, setModel] = useState("");
-    const [IsVisible, setIsVisible] = useState(true);
+    async function handleAddProduct(){
+       try{
+        const token = localStorage.getItem("token");
+        if(token === null){
+            toast.error("You are not authorized to perform this action.");
+            window.location.href = "/login";
+            return;
+        }
+           await axios.post(import.meta.env.VITE_API_URL + "/products", {
+            productId : productId,
+            name : name,            
+            description : description,
+            altNames : altNames.split(","),
+            price : price,
+            labelledPrice : labelledPrice,
+            category : category,
+            brand : brand,
+            model : model,
+            isVisible : isVisible
+           },{
+            headers : {
+                Authorization : "Bearer " +token
+            }
+           });
 
+           toast.success("Product added successfully."); 
+              navigate("/admin/products");     
 
+       }catch(err){
+        toast.error(err?.response?.data?.message || "Failed to add product. Please try again.");
+        return;
+       }
+    }
+    
     return(
-        <div className="w-full max-h-full flex flex-wrap items-start ">
-            <div className="w-[50%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Product ID :</label>
-            <input  
-            value={productID}
-            onChange={(e)=>setProductID(e.target.value)}
-            placeholder="Ex: ID001" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+        <div className="w-full max-h-full flex flex-wrap items-start overflow-y-scroll hide-scroll-track">
+            <h1 className="w-full text-3xl font-bold mb-4 sticky top-0 bg-primary">Add New Product</h1>
+            <div className="w-[50%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Product ID</label>
+                <input value={productId} onChange={(e)=>{setProductId(e.target.value)}}  placeholder="Ex: ID001" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
             </div>
-            <div className="w-[50%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Product Name :</label>
-            <input
-            maxLength={5} 
-            value={productName}
-            onChange={(e)=>setProductName(e.target.value)}
-            placeholder="Ex: Laptop" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+            <div className="w-[50%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Product Name</label>
+                <input value={name} onChange={(e)=>{setName(e.target.value)}}  placeholder="Ex: Laptop" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
             </div>
-             <div className="w-[100%] h-[170px] flex flex-col">
-            <label className="font-bold ml-2">Description :</label>
-            <textarea
-            value={Description}
-            onChange={(e)=>setDescription(e.target.value)}
-            placeholder="Ex: This is a laptop" className="h-[100px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+            <div className="w-full h-[170px] flex flex-col">
+                <label className="font-bold ml-2">Description</label>
+                <textarea value={description} onChange={(e)=>{setDescription(e.target.value)}}  placeholder="Ex: Laptop" className="border-4 border-accent rounded-[10px] h-[100px] p-2 m-2 focus:outline-white"/>
             </div>
-            <div className="w-[100%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Altanative Names(comma separated) :</label>
-            <input
-            value={AltName}  
-            onChange={(e)=>setAltName(e.target.value)}
-            placeholder="Ex: Laptop, Computer" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+            <div className="w-full h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Alternative Names (Comma Separated)</label>
+                <input value={altNames} onChange={(e)=>{setAltNames(e.target.value)}}  placeholder="Ex: Laptop, Notebook, Portable Computer" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
             </div>
-             <div className="w-[50%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Price :</label>
-            <input  
-            value={Price}
-            onChange={(e)=>setPrice(e.target.value)}
-            placeholder="Ex: 1000" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+            <div className="w-[50%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Price</label>
+                <input value={price} onChange={(e)=>{setPrice(e.target.value)}} type="number" placeholder="Ex: 50000" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
             </div>
-             <div className="w-[50%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Labelled Price :</label>
-            <input  
-            value={Label}
-            onChange={(e)=>setLabel(e.target.value)}
-            placeholder="Ex: New, Sale" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
+            <div className="w-[50%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Labelled Price</label>
+                <input value={labelledPrice} onChange={(e)=>{setLabelledPrice(e.target.value)}} type="number" placeholder="Ex: 60000" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
             </div>
-                <div className="w-[25%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Category :</label>
-            <select 
-            value={Category}
-            onChange={(e)=>setCategory(e.target.value)}
-            className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white">
-                <option value="Others">Others</option>
-                <option value="Computers">Computers</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Components">Components</option>
-                <option value="Peripherals">Peripherals</option>
-            </select>
-            </div>
-                <div className="w-[25%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Brand :</label>
-            <select 
-            value={Brand}
-            onChange={(e)=>setBrand(e.target.value)}
-            className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white">
-                <option value="Standard">Standard</option>
-                <option value="Dell">Dell</option>              
-                <option value="HP">HP</option>
-                <option value="Lenovo">Lenovo</option>
-                <option value="Asus">Asus</option>
-                <option value="Acer">Acer</option>
-                <option value="Apple">Apple</option>
+            <div className="w-[25%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Categories</label>
+                <select value={category} onChange={(e)=>{setCategory(e.target.value)}} className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white">
+                    <option value="Others">Others</option>
+                    <option value="Laptops">Laptops</option>
+                    <option value="Desktops">Desktops</option>
+                    <option value="Components">Components</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Peripherals">Peripherals</option>
                 </select>
-                </div>
-                <div className="w-[25%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Model :</label>
-            <input  
-            value={Model}
-            onChange={(e)=>setModel(e.target.value)}
-            placeholder="Ex: Inspiron 15" className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white"/>
             </div>
-                <div className="w-[25%] h-[120px] flex flex-col">
-            <label className="font-bold ml-2">Is Visible :</label>
-            <select 
-            value={IsVisible}
-            onChange={(e)=>setIsVisible(e.target.value)}
-            className="h-[50px] p-2 m-2 border-4 border-accent rounded-[10px] focus:outline-white">
-                <option value={true}>True</option>
-                <option value={false}>False</option>
+            <div className="w-[25%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Brand</label>
+                <select value={brand} onChange={(e)=>{setBrand(e.target.value)}} className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white">
+                    <option value="Generic">Generic</option>
+                    <option value="Dell">Dell</option>
+                    <option value="HP">HP</option>
+                    <option value="Lenovo">Lenovo</option>
+                    <option value="Asus">Asus</option>
+                    <option value="Acer">Acer</option>
+                    <option value="Apple">Apple</option>
                 </select>
-                </div>
-                <div className="w-[100%] h-[100px] flex justify-center items-center">
-                    <button className="bg-accent text-white font-bold p-4 rounded-lg hover:bg-secondary transition-all duration-300">Add Product</button>
+            </div>
+            <div className="w-[25%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Model</label>
+                <input value={model} onChange={(e)=>{setModel(e.target.value)}} placeholder="Ex: Inspiron 15" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
+            </div>
+            <div className="w-[25%]  h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Is Visible</label>
+                <select value={isVisible} onChange={(e)=>{setIsVisible(e.target.value)}} className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white">
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                </select>
+            </div>
+            <div className="w-full h-[80px] bg-white sticky bottom-0 rounded-b-2xl flex justify-end items-center p-4 gap-4">
+                 <button className="bg-red-600 text-white font-bold rounded-[10px] h-[50px] w-[150px] ml-4 hover:bg-red-700">Cancel</button>
+                <button onClick={handleAddProduct} className="bg-accent text-white font-bold rounded-[10px] h-[50px] w-[150px] hover:bg-accentHover">Add Product</button>
+               
                 </div>
         </div>
     )
