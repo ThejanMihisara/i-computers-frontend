@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import uploadfile from "../../utils/mediaUpload.js";
 /*
 
     
@@ -12,6 +13,7 @@ import { useNavigate } from "react-router-dom";
         },
 */
 export default function AdminAddProductPage(){
+
     
     const [productId , setProductId] = useState("");
     const [name , setName] = useState("");
@@ -24,6 +26,7 @@ export default function AdminAddProductPage(){
     const [model , setModel] = useState("");
     const [isVisible , setIsVisible] = useState(true);
     const navigate = useNavigate();
+    const [files, setFiles] = useState([]);
 
     async function handleAddProduct(){
        try{
@@ -33,11 +36,22 @@ export default function AdminAddProductPage(){
             window.location.href = "/login";
             return;
         }
+
+        const fileUploadPromises = [];
+
+        for (let i = 0; i < files.length; i++) {
+            fileUploadPromises[i] = uploadfile(files[i]);
+        }
+
+        const imageUrls = await Promise.all(fileUploadPromises);  
+        
+        
            await axios.post(import.meta.env.VITE_API_URL + "/products", {
             productId : productId,
             name : name,            
             description : description,
             altNames : altNames.split(","),
+            imageUrls:imageUrls,
             price : price,
             labelledPrice : labelledPrice,
             category : category,
@@ -74,6 +88,11 @@ export default function AdminAddProductPage(){
                 <label className="font-bold ml-2">Description</label>
                 <textarea value={description} onChange={(e)=>{setDescription(e.target.value)}}  placeholder="Ex: Laptop" className="border-4 border-accent rounded-[10px] h-[100px] p-2 m-2 focus:outline-white"/>
             </div>
+             <div className="w-full h-[120px] flex flex-col">
+                <label className="font-bold ml-2">Product Images</label>
+                <input type="file" multiple onChange={(e)=>{setFiles(e.target.files)}} className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
+             </div>
+
             <div className="w-full h-[120px] flex flex-col">
                 <label className="font-bold ml-2">Alternative Names (Comma Separated)</label>
                 <input value={altNames} onChange={(e)=>{setAltNames(e.target.value)}}  placeholder="Ex: Laptop, Notebook, Portable Computer" className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"/>
@@ -115,10 +134,15 @@ export default function AdminAddProductPage(){
             </div>
             <div className="w-[25%]  h-[120px] flex flex-col">
                 <label className="font-bold ml-2">Is Visible</label>
-                <select value={isVisible} onChange={(e)=>{setIsVisible(e.target.value)}} className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white">
-                    <option value={true}>Yes</option>
-                    <option value={false}>No</option>
-                </select>
+            <select
+                  value={isVisible}
+               onChange={(e) => setIsVisible(e.target.value === "true")}
+               className="border-4 border-accent rounded-[10px] h-[50px] p-2 m-2 focus:outline-white"
+            >
+                   <option value="true">Yes</option>
+                   <option value="false">No</option>
+            </select>
+
             </div>
             <div className="w-full h-[80px] bg-white sticky bottom-0 rounded-b-2xl flex justify-end items-center p-4 gap-4">
                  <button className="bg-red-600 text-white font-bold rounded-[10px] h-[50px] w-[150px] ml-4 hover:bg-red-700">Cancel</button>
