@@ -3,13 +3,19 @@ import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import getFormattedPrice from "../../utils/price-format";
 import axios from "axios";
+import { CiEdit, CiTrash } from "react-icons/ci";
+
+import LoadingAnimation from "../../components/LoadingAnimation";
+import DeleteModal from "../../components/deleteModal";
 
 
-const sampleProductsList =[]
+// const sampleProductsList =[]
 
 export default function AdminProductsPage(){
-    const [products , setproducts] =  useState(sampleProductsList);
+  const [loading, setLoading] = useState(true);
+    const [products , setproducts] =  useState([]);
     useEffect(()=>{
+      if(loading){
           const token=localStorage.getItem("token")
     axios.get(import.meta.env.VITE_API_URL+"/products",{
         headers:{
@@ -17,8 +23,10 @@ export default function AdminProductsPage(){
         }
     }).then((response)=>{
         setproducts(response.data)
+        setLoading(false)
     })
-    },[])
+  }
+    },[loading])
  
 
     return(
@@ -38,6 +46,8 @@ export default function AdminProductsPage(){
   <div className="flex-1 min-h-0 rounded-xl bg-white shadow-lg border border-secondary/10 ">
    
       {/* 🔴 CHANGED: w-full + table-auto (no forced min-w-max) */}
+
+     { loading ? <div className="w-full h-full flex justify-center items-center"><LoadingAnimation /></div> :
       <table className="w-full table-auto border-collapse text-sm text-secondary bg-white ">
 
         {/* 🔴 CHANGED: sticky header row works better on thead/tr */}
@@ -53,6 +63,7 @@ export default function AdminProductsPage(){
               "Visibility",
               "Brand",
               "Model",
+              "Actions"
             ].map((head) => (
               <th
                 key={head}
@@ -103,11 +114,46 @@ export default function AdminProductsPage(){
 
               <td className="px-5 py-4 whitespace-nowrap">{item.brand || "N/A"}</td>
               <td className="px-5 py-4 whitespace-nowrap">{item.model || "N/A"}</td>
+              <td className="px-5 py-7 whitespace-nowrap flex gap-4 text-xl justify-center items-center">
+                <Link to={"/admin/update-product"} state={item}
+                className={"hover:text-accent"}><CiEdit/>
+                  
+                </Link>
+                {/* <CiTrash 
+                className={"hover:text-red-600 cursor-pointer"}
+                onClick={()=>{
+                  const token=localStorage.getItem("token");
+                  axios.delete(import.meta.env.VITE_API_URL + "/products/" + item.productId, {
+                    headers: {
+                      Authorization: "Bearer " + token
+                    }
+                  }).then(
+                    ()=>{
+                    toast.success("Product deleted successfully.");
+                  //   // Refresh the products list after deletion
+                  //   axios.get(import.meta.env.VITE_API_URL+"/products",{
+                  //     headers:{
+                  //         Authorization:"Bearer "+token
+                  //     }
+                  // }).then((response)=>{
+                  //     setproducts(response.data)
+                      
+                  // }
+                  // )
+                  setLoading(true);
+                  }).catch((error) => {
+                    toast.error(error?.response?.data?.message || "Failed to delete product. Please try again.");
+                  });
+                }}/> */}
+
+
+                <DeleteModal product={item} setLoading={setLoading} />
+              </td>
             </tr>
           ))}
         </tbody>
 
-      </table>
+      </table>}
     </div>
   </div>
 
