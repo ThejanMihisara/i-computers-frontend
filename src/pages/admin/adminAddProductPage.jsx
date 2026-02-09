@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import uploadfile from "../../utils/mediaUpload.js";
+import { a } from "framer-motion/client";
 /*
 
     
@@ -29,6 +30,46 @@ export default function AdminAddProductPage(){
     const [files, setFiles] = useState([]);
 
     async function handleAddProduct(){
+        if(productId===""){
+            toast.error("Product ID is required.");
+            return;
+        }
+        if(name===""){
+            toast.error("Product name is required.");
+            return;
+        }
+        if(description===""){
+            toast.error("Product description is required.");
+            return;
+        }
+        if(price===""){
+            toast.error("Product price is required.");
+            return;
+        }
+        if(labelledPrice===""){
+            toast.error("Product labelled price is required.");
+            return;
+        }
+        if(altNames===""){
+            toast.error("Alternative names are required.");
+            return;
+        }
+        if(imageUrls===""){
+            toast.error("At least one product image is required.");
+            return;
+        }
+        if(category===""){
+            toast.error("Product category is required.");
+            return;
+        }
+        if(brand===""){
+            toast.error("Product brand is required.");
+            return;
+        }
+        if(model===""){
+            toast.error("Product model is required.");
+            return;
+        }
        try{
         const token = localStorage.getItem("token");
         if(token === null){

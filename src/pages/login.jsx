@@ -40,6 +40,7 @@ export default function LoginPage() {
 
 			localStorage.setItem("token" , response.data.token)
 			
+			
 			if(response.data.role == "admin"){
 				
 				navigate("/admin/")
