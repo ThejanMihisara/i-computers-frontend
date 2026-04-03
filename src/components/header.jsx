@@ -5,7 +5,7 @@ import UserData from "./userData";
 
 export default function Header(){
     return(
-        <header className="w-full  bg-accent h-[100px] justify-center items-center flex relative">
+        <header className="w-full  bg-accent h-[100px] justify-center items-center flex sticky top-0 z-20">
             <div className="h-full flex items-center justify-center absolute left-5">
               <img src="/logo.png" alt="Logo" className="h-[70px]"/>
               <h1 className="text-2xl font-bold text-white ml-4">Isuri Computers</h1>
